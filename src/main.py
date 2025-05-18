@@ -54,7 +54,7 @@ def main() -> None:
     while True:
         for k, v in STREAMS.items():
             capture(k, v)
-        time.sleep(300)
+        time.sleep(600)
 
 
 if __name__ == "__main__":
