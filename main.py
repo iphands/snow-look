@@ -29,8 +29,12 @@ def init_streams() -> Dict[str, Dict[str, Any]]:
     return ret
 
 
-def capture(name: str, stream: Any) -> None:
+# def capture(name: str, stream: Any) -> None:
+def capture(name: str, url: str) -> None:
     say(name, "Starting capture")
+    stream = CamGear(
+        source=url, y_tube=True, time_delay=1, stream_mode=True, logging=True
+    ).start()
     stamp = int(time.time())
     frame = stream.read()
     if frame is not None:
@@ -46,11 +50,11 @@ def capture(name: str, stream: Any) -> None:
 def main() -> None:
     for k in STREAMS.keys():
         os.makedirs(f"data/{k}", exist_ok=True)
-    streams = init_streams()
+    # streams = init_streams()
     while True:
-        for k, v in streams.items():
-            capture(k, v["stream"])
-        time.sleep(90)
+        for k, v in STREAMS.items():
+            capture(k, v)
+        time.sleep(300)
 
 
 if __name__ == "__main__":
