@@ -8,5 +8,5 @@ docker rm snow-look
 bash ./build.sh
 
 docker create --name $NAME \
-  -v /main/docker/snow-look/data:/src/data
+  -v /main/docker/snow-look/data:/src/data \
   $NAME
