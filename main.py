@@ -5,8 +5,9 @@ import os
 from typing import Dict, Any
 from vidgear.gears import CamGear
 
-STREAMS: Dict[str, Dict[str, str]] = {
-    "alpental_mid": {"url": "https://www.youtube.com/watch?v=c_XLrUYV8tk"}
+STREAMS: Dict[str, str] = {
+    "alpental_mid": "https://www.youtube.com/watch?v=c_XLrUYV8tk",
+    "central_express": "https://www.youtube.com/watch?v=0_LK8swEqzc",
 }
 
 
@@ -18,19 +19,22 @@ def init_streams() -> Dict[str, Dict[str, Any]]:
     ret = {}
     for k, v in STREAMS.items():
         say(k, "Initializing stream...")
-        v["stream"] = CamGear(
-            source=v["url"], y_tube=True, time_delay=1, stream_mode=True, logging=True
+        stream = CamGear(
+            source=v, y_tube=True, time_delay=1, stream_mode=True, logging=True
         ).start()
-        ret[k] = v
+        ret[k] = {
+            "url": v,
+            "stream": stream,
+        }
     return ret
 
 
-def capture(name: str, url: str, stream: Any) -> None:
+def capture(name: str, stream: Any) -> None:
     say(name, "Starting capture")
     stamp = int(time.time())
     frame = stream.read()
     if frame is not None:
-        cv2.imwrite(f"./data/{name}-{stamp}.jpg", frame)
+        cv2.imwrite(f"./data/{name}/{stamp}.jpg", frame)
     else:
         say(
             name,
@@ -40,11 +44,13 @@ def capture(name: str, url: str, stream: Any) -> None:
 
 
 def main() -> None:
+    for k in STREAMS.keys():
+        os.makedirs(f"data/{k}", exist_ok=True)
     streams = init_streams()
     while True:
         for k, v in streams.items():
-            capture(k, v["stream"], v["url"])
-            time.sleep(90)
+            capture(k, v["stream"])
+        time.sleep(90)
 
 
 if __name__ == "__main__":
